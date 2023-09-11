@@ -1,0 +1,40 @@
+---
+title: "FML_Assignment_811292363"
+author: "Mohana Krishna Nitesh Varma Kalidindi"
+date: "2023-09-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Importing the dataset into R
+
+# Source: Kaggle (<https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques?rvi=1>)
+
+library(readr)  
+data <- read_csv("house_prices.csv")  
+str(data)  
+
+# Summary statistics for quantitative variables
+
+summary(data$SalePrice)      
+summary(data$LotArea)     
+
+# Frequency table for a categorical variable ('Neighborhood')
+
+table(data$Neighborhood)
+
+# Transforming a quantitative variable (logarithm of 'LotArea')
+
+data$log_LotArea <- log(data$LotArea)
+
+# Ploting a histogram for a quantitative variable (SalePrice)
+
+hist(data$SalePrice, main = "Histogram of Sale Price", xlab = "Sale Price")
+
+# Creating a scatterplot (LotArea vs. SalePrice)
+
+plot(data$LotArea,data$SalePrice, main = "Scatterplot", xlab = "Lot Area", ylab = "Sale Price")
+
