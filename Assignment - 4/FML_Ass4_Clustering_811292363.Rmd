@@ -1,0 +1,153 @@
+---
+title: "FML_Ass4_Clustering_811292363"
+author: "Mohana Krishna Nitesh Varma Kalidindi"
+date: "2023-11-12"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+---
+```{r}
+Pharmaceuticals <- read.csv("Pharmaceuticals.csv")
+```
+
+```{r}
+# Loading library for Data manipulation
+library(tidyverse)
+
+```
+
+```{r}
+# Loading library used for clustering algorithms and visualization
+library(factoextra)
+
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(cluster)
+
+```
+
+```{r}
+Pharma_data <- na.omit(Pharmaceuticals) 
+
+# Data after removing the incomplete cases
+Pharma_data
+
+```
+# Use only the numerical variables (1 to 9) to cluster the 21 firms. Justify the various choices made in conducting the cluster analysis, such as weights for different variables, the specific clustering algorithm(s) used, the number of clusters formed, and so on. 
+
+```{r}
+# Taking the quantitative variables(1-9) to cluster the 21 firms
+row.names(Pharma_data)<- Pharma_data[,1]
+Pharma_data1<- Pharma_data[,3:11]  
+
+# Considering only numerical values i.e., 3-11 columns from csv file
+head(Pharma_data1)
+
+```
+```{r}
+# Normalizing the data frame with scale method
+Pharma_data2<-scale(Pharma_data1)
+head(Pharma_data2)
+```
+```{r}
+# To determine the number of clusters to do the cluster analysis using Elbow Method
+fviz_nbclust(Pharma_data2, kmeans, method = "wss")
+
+```
+
+```{r}
+# By observing the above results of the graph from Elbow method, 
+# We can say that graph is not clear to choose whether k=2 or 3 or 4 or 5.
+# Using Silhouette method for determining no of clusters
+
+fviz_nbclust(Pharma_data2, kmeans, method = "silhouette")
+
+```
+
+```{r}
+# Applying K-means
+set.seed(64060)
+k_5<- kmeans(Pharma_data2,centers=5,nstart = 25)
+
+```
+
+```{r}
+# Visualizing the output
+# Centroids
+k_5$centers
+
+```
+```{r}
+# To Visualize the clusters
+fviz_cluster(k_5,data = Pharma_data2) 
+
+```
+
+```{r}
+k_5
+
+```
+
+```{r}
+
+distance<- dist(Pharma_data2, method = "euclidean")
+fviz_dist(distance)
+
+```
+
+```{r}
+# From the observations, there are 5 clusters and 
+# the center is defined after 25 restarts which is determined in k-means.
+# K - Means Cluster Analysis - Fit the data with 5 clusters
+fit<-kmeans(Pharma_data2,5)
+
+```
+
+
+```{r}
+# Finding the mean value of all quantitative variables for each cluster
+aggregate(Pharma_data2,by=list(fit$cluster),FUN=mean)
+
+```
+
+```{r}
+
+# To view the cluster plot
+
+clusplot(Pharma_data2,fit$cluster,color =
+           TRUE,shade = TRUE,labels = 2,lines = 0)
+
+```
+
+# Interpret the clusters with respect to the numerical variables used in forming the clusters. 
+
+### Cluster_1 - AGN, PHA, BAY - These have the highest PE_Ratio. By observing the mean values of all quantitative variables for each cluster, the ROE value is poor.
+### Cluster_2 - JNJ, MRK, GSK, and PFE. They have the biggest market capitalization and good leverage value.
+### Cluster_3 - AHM, AVE, and WPI. They have the lowest beta and asset turnover.
+### Cluster_4 - IVX, MRX, ELN, and CHTT. They exhibit lowest market capitalization, leverage, and beta. They're good and their revenue growth is the highest.
+### Cluster_5 - ABT, NVS, AZN, LLY, BMY, WYE, SGP. These companies have the largest net profit margin, the biggest asset turnover, and the lowest sales growth.
+
+
+# Is there a pattern in the clusters with respect to the numerical variables (10 to 12)? (those not used in forming the clusters)
+
+### For cluster 1: It should be held in accordance with media recommendations as it has the highest PE Ratio.
+### For cluster 2: It has a good leverage value and the largest market capitalization. Additionally, they can be rather violent. 
+### For cluster 3: Its beta and asset turnover are the lowest. However, media endorsements are very positive.
+### For cluster 4: They come with a modest recommendation despite the high leverage ratio.
+### For Cluster 5: They have the largest net profit margin, the highest asset turnover and the lowest revenue growth.
+
+
+# Provide an appropriate name for each cluster using any or all of the variables in the dataset.
+
+### Cluster 1: Hold cluster – Their numbers are respectable.
+### Cluster 2: Mild Purchase or Hold cluster.
+### Cluster 3: To Purchase or To Sell
+### Cluster 4: Purchase Cluster; as it is fairly stable.
+### Cluster 5: High Hold Cluster
